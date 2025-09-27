@@ -1,0 +1,27 @@
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Local env vars
+.env
+
+# Serverless build outputs
+.serverless/
+.build/
+
+# AWS SAM / CDK / CloudFormation (just in case)
+.aws-sam/
+cdk.out/
+
+# Logs
+*.log
+logs/
+*.tmp
+
+# IDE / OS files
+.DS_Store
+.idea/
+.vscode/
+*.swp
