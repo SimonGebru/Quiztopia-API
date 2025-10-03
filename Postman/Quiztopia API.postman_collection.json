@@ -1,0 +1,341 @@
+{
+	"info": {
+		"_postman_id": "457d2b6d-bd47-4965-8755-529e3181cd7c",
+		"name": "Quiztopia API",
+		"description": "Postman collection för Quiztopia API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42813667"
+	},
+	"item": [
+		{
+			"name": "Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"simon\",\n  \"password\": \"hemligt\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/signup",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {",
+							"  const json = pm.response.json();",
+							"  if (json.token) {",
+							"    // Spara token som collection-variabel",
+							"    pm.collectionVariables.set('token', json.token);",
+							"    // Dekoda JWT payload och spara sub (userId) och username",
+							"    try {",
+							"      const base64Url = json.token.split('.')[1];",
+							"      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');",
+							"      const payload = JSON.parse(atob(base64));",
+							"      if (payload && payload.sub) pm.collectionVariables.set('userId', payload.sub);",
+							"      if (payload && payload.username) pm.collectionVariables.set('username', payload.username);",
+							"      console.log('Sparade token, userId och username på collection-variabler.');",
+							"    } catch (e) {",
+							"      console.log('Kunde inte dekoda JWT:', e.message);",
+							"    }",
+							"  }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"simon\",\n  \"password\": \"hemligt\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Quiz",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 201 || pm.response.code === 200) {",
+							"  const json = pm.response.json();",
+							"  if (json.quizId) {",
+							"    pm.collectionVariables.set('quizId', json.quizId);",
+							"    console.log('Sparade quizId på collection-variabler:', json.quizId);",
+							"  }",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Fotbolls Quiz\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/quiz",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"quiz"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Question",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"quizId\": \"{{quizId}}\",\n  \"question\": \"Vem är världens bästa spelare?\",\n  \"answer\": \"Lionel Messi\",\n  \"location\": { \"longitude\": \"11.97\", \"latitude\": \"57.70\" }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/quiz/question",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"quiz",
+						"question"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Quizzes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/quiz",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"quiz"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Quiz By User",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/quiz/{{userId}}/{{quizId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"quiz",
+						"{{userId}}",
+						"{{quizId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Quiz",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/quiz/{{quizId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"quiz",
+						"{{quizId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit Score",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"score\": 85\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/quiz/{{quizId}}/score",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"quiz",
+						"{{quizId}}",
+						"score"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Leaderboard",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/quiz/{{quizId}}/leaderboard",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"quiz",
+						"{{quizId}}",
+						"leaderboard"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://f9w6qc6ia5.execute-api.eu-north-1.amazonaws.com"
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "username",
+			"value": ""
+		},
+		{
+			"key": "quizId",
+			"value": ""
+		}
+	]
+}
