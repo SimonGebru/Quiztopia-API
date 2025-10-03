@@ -16,4 +16,5 @@ Exakt hur detta är uppsatt ser man också i min medföljande Postman-collection
 I mappen POSTMAN/ hittar du en färdig config-fil (quiztopia.postman_collection.json) för att enkelt kunna testa alla endpoints i API:t.
 Eftersom att jag pratar så segt drog det över lite med tiden men du kan sätta videon på 1.5 i hastighet :)
 
-Länk till inspelning: https://youtu.be/q5L9Afr14CM
+Länk till inspelning: https://youtu.be/t9HPlvf8duA 
+
